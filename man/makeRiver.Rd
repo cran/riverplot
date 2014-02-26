@@ -1,0 +1,161 @@
+\name{makeRiver}
+\alias{makeRiver}
+\title{Create a new riverplot object}
+\usage{
+makeRiver(nodes, edges, node_labels = NULL, node_xpos = NULL,
+  node_ypos = NULL, node_styles = NULL, edge_styles = NULL,
+  default_style = NULL)
+}
+\arguments{
+  \item{edges}{A named list or a data frame specifying the
+  edges between the nodes.}
+
+  \item{nodes}{Data frame with node ID's, positions and
+  optionally other information}
+
+  \item{node_xpos}{A named vector of numeric values
+  specifying the horizontal positions on the plot.}
+
+  \item{node_ypos}{A named vector of numeric values
+  specifying the vertical positions on the plot.}
+
+  \item{node_labels}{A named character vector of labels for
+  the nodes}
+
+  \item{node_styles}{A named list specifying the styles for
+  the nodes}
+
+  \item{edge_styles}{A named list specifying the styles for
+  the nodes}
+
+  \item{default_style}{list containing style information
+  which is applied to every node and every edge}
+}
+\value{
+A riverplot object which can directly be plotted.
+}
+\description{
+Create a new riverplot object
+}
+\details{
+Functions to create a new object of the riverplot class
+from the provided data.
+
+\code{makeRiver} creates a plot from an object which
+specifies the graph directly, i.e. all nodes, their
+horizontal positions on the plot, provided styles etc. See
+sections below for detailed explanations.
+}
+\section{Structure of the riverplot objects}{
+  A riverplot object is a list with the following entries:
+  \describe{ \item{nodes}{A data frame specifying the
+  nodes, containing at least the columns "ID" and "x"
+  (horizontal position of the node). Optionally, it can
+  also contain columns "labels" (the labels to display) and
+  "y" (vertical position of the node on the plot)}
+  \item{edges}{A data frame specifying the edges and graph
+  topology, containing at least the columns "ID", "N1",
+  "N2" and "Value", specifying, respectively, the ID of the
+  edge, the parent node, the child node, and the size of
+  the edge.} \item{styles}{A named list of styles. Names of
+  this list are the node or edge IDs. Values are styles
+  specifying the style of the given node or edge (see
+  below).} }
+
+  Whether or not the list used to plot is exactly of class
+  \code{riverplot-class} does not matter as long as it has
+  the correct contents. The \code{makeRiver} function is
+  here are for the convenience of checking that this is the
+  case and converting information in different formats.
+}
+
+\section{Generating riverplot objects}{
+  To generate and fool-proof riverplot objects, you can use
+  the \code{makeRiver} function. This functions allows a
+  number of ways of specifying the node and edge
+  information.
+
+  Nodes can be specified as a character vector (simply
+  listing the nodes) or as a data frame. \itemize{ \item
+  character vector: in this case, you also need to provide
+  the \var{node_xpos} argument to specify the horizontal
+  positions of the nodes.  \item data frame: the data frame
+  must have at least a column called "ID"; the horizontal
+  position can be specified either with \var{node_xpos}
+  argument or by column "x" in the data frame. Optionally,
+  the data frame can include columns "labels" and "y"
+  (vertical positions of the node). Any \var{NA} values are
+  ignored (not entered into the riverplot project).
+  Additionaly, the data frame may contain style
+  information. }
+
+  Edges / graph topology can be specified in one of two
+  objects: either a named list, or a data frame: \itemize{
+  \item you can supply a named list with edges of the
+  graph. The name of each element is the name of the
+  outgoing (parental) node. Each element is a named list;
+  the names of the list are the names of the incoming
+  (child) node IDs; the values are the width of the edge
+  between the outgoing and incoming nodes.  \item
+  Alternatively, you can provide the edges as a data frame.
+  Each row corresponds to an edge, and the data frame must
+  have the following columns:
+
+  \describe{ \item{N1}{The ID of the first node}
+  \item{N2}{The ID of the second node} \item{Value}{The
+  width of the edge between N1 and N2} } If an ID column is
+  absent, it will be generated from N1 and N2. Additionaly,
+  the data frame may contain style information. Any
+  \var{NA} values are ignored (not entered into the
+  riverplot object). }
+}
+
+\section{Riverplot styles}{
+  Styles are lists containing attributes (such as "col" for
+  color or "nodestyle") and values. There is no real
+  difference between node and edge styles, except that some
+  attributes only apply to nodes or edges. See
+  \code{\link{riverplot-styles}} for more information on
+  style attributes.
+
+  When \code{makeRiver} generates the riverplot object, it
+  combines style information from the following sources in
+  the following order: \itemize{ \item parameter
+  \var{default_style} is a style applied to all nodes and
+  edges \item if the parameter \var{nodes} and/or
+  \var{edges} is a data frame, it may include columns with
+  names corresponding to style attributes. For example, a
+  column called "col" will contain the color attribute for
+  any nodes / edges. \var{NA} values in these columns are
+  ignored. \item \var{node_styles} and \var{edge_styles}
+  are lists of styles, with names corresponding to node IDs
+  and edge IDs, which will replace any previously specified
+  styles. }
+}
+\examples{
+nodes <- c( LETTERS[1:3] )
+edges <- list( A= list( C= 10 ), B= list( C= 10 ) )
+r <- makeRiver( nodes, edges, node_xpos= c( 1,1,2 ),
+  node_labels= c( A= "Node A", B= "Node B", C= "Node C" ),
+  node_styles= list( A= list( col= "yellow" )) )
+plot( r )
+
+# equivalent form:
+nodes <- data.frame( ID= LETTERS[1:3],
+               x= c( 1, 1, 2 ),
+               col= c( "yellow", NA, NA ),
+               labels= c( "Node A", "Node B", "Node C" ),
+               stringsAsFactors= FALSE )
+r <- makeRiver( nodes, edges )
+plot( r )
+# all nodes but "A" will be red:
+r <- makeRiver( nodes, edges, default_style= list( col="red" ) )
+plot( r )
+# overwrite the node information from "nodes":
+r <- makeRiver( nodes, edges, node_styles= list( A=list( col="red" ) ) )
+plot( r )
+}
+\author{
+January Weiner
+}
+

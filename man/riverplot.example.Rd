@@ -1,0 +1,23 @@
+\name{riverplot.example}
+\alias{riverplot.example}
+\title{Generate an example for riverplot}
+\usage{
+riverplot.example()
+}
+\description{
+Generate an example for riverplot
+}
+\details{
+The plotting functions in the riverplot package work on an
+object of the riverplot class. This function returns an
+object of the riverplot class to demonstrate how such an
+object (which is actually a simple list) can be created.
+}
+\examples{
+x <- riverplot.example()
+plot( x )
+}
+\author{
+January Weiner <january.weiner@gmail.com>
+}
+

@@ -1,0 +1,61 @@
+\name{curveseg}
+\alias{curveseg}
+\title{Draw a curved segment}
+\usage{
+curveseg(x0, x1, y0, y1, width = 1, nsteps = 50, col = "#ffcc0066",
+  grad = NULL, lty = 1, form = c("sin", "line"))
+}
+\arguments{
+  \item{x0}{X coordinate of the starting point}
+
+  \item{y0}{X coordinate of the starting point}
+
+  \item{x1}{X coordinate of the end point}
+
+  \item{y1}{X coordinate of the end point}
+
+  \item{width}{Width of the segment to plot}
+
+  \item{nsteps}{Number of polygons to use for the segments.
+  The more, the smoother the picture, but at the same time,
+  the more time-consuming to display.}
+
+  \item{col}{Color to use. Ignored if grad is not
+  \code{NULL}.}
+
+  \item{grad}{Gradient to use. Can be anything that
+  \code{colorRampPalette} can understand.}
+
+  \item{lty}{Line type for drawing of the segment. Use
+  \code{lty=0} for no line.}
+
+  \item{form}{"sin" for a sinusoidal segment. "line" for a
+  straight segment.}
+}
+\value{
+no value is returned
+}
+\description{
+Draws a curved segment from point \code{(x0,y0)} to
+\code{(x1,y1)}. The segment is a framgent of a sinusoid,
+has a defined width and can either have a single color or a
+color gradient.
+}
+\examples{
+# a DNA strand
+plot.new()
+par( usr= c( 0, 4, -2.5, 2.5 ) )
+
+w    <- 0.4
+cols <- c( "blue", "green" )
+init <- c( -0.8, -0.5 )
+pos  <- c( 1, -1 )
+step <- 0.5
+
+for( i in rep( rep( c( 1, 2 ), each= 2 ), 5 ) ) {
+  curveseg( init[i], init[i] + step, pos[1], pos[2], width= w, col= cols[i] )
+  init[i] <- init[i] + step
+  pos <- pos * -1
+}
+}
+
