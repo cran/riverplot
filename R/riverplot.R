@@ -123,7 +123,8 @@ calcsizes2 <- function( x ) {
   names( lefts ) <- nnames
   rights <- sapply( nnames, function( n ) { sum( e$Value[ e$N1 == n ] ) } )
   names( rights ) <- nnames
-  sizey     <- sapply( nnames, function( n ) max( rights[n], lefts[n] ) )
+  # sizey     <- sapply( nnames, function( n ) max( rights[n], lefts[n] ) )
+  sizey <- apply( cbind( lefts, rights ), 1, max )
   names( sizey ) <- nnames
   pos.list  <- sort( unique( x$nodes$x ) )
   pos.maxes <- sapply( pos.list, function( p ) sum( sizey[ nnames[ x$nodes$x == p ] ] ) )

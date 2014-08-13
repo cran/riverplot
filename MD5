@@ -1,4 +1,4 @@
-074f2544a077372aab6801ec232e851b *DESCRIPTION
+6258a3c01c72b51140ac7f0246140354 *DESCRIPTION
 f53915ef660dd7cd555197590dfa202e *NAMESPACE
 b70440bd5e56e61e78b71b5945a405c9 *R/curveseg.R
 96f7154cd5d872eaef426008c3d48709 *R/importexport.R
@@ -7,7 +7,7 @@ f27b0f2ba0ac4754c524506fe322d22c *R/mtx2conn.R
 e8e8fb5293ed85ebc4aaac14ffd69974 *R/rampale.R
 7ac9e21ec4ca19546a7059e68923b1f9 *R/riverplot-class.R
 953a695406f856b8632a20a9b3bd2245 *R/riverplot-package.R
-b41b34d55d2f620595c3555733c77ed2 *R/riverplot.R
+63cad3c65d7a82100f180e0610e49676 *R/riverplot.R
 7d83da10f1edf0d4acfe2a657c099869 *R/riverplot.example.R
 8643ca15dc23173c2bfdfbdca8621ed5 *R/styles.R
 aa71643e607d6e876070b12bd4c77764 *data/minard.rda
