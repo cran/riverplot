@@ -1,7 +1,8 @@
-deb <- FALSE
+debug <- FALSE
 
-dmsgf <- function( ... ) if( deb ) print( sprintf( ... ) )
-dmsg  <- function( ... ) if( deb ) print( ... )
+dmsgf <- function( ... ) if( debug ) print( sprintf( ... ) )
+dmsg  <- function( ... ) if( debug ) print( ... )
+dmsgc <- function( ... ) if( debug ) cat( sprintf( ... ) )
 
 # make sure that N1's position < N2's position
 orderConnections <- function( x ) {
@@ -343,7 +344,7 @@ plot.riverplot <- function( x, ...  ) riverplot( x, ... )
 #'
 #' Style information which is missing from the riverplot object \code{x} (for example, if the
 #' node style is not specified for each node in the object) is taken from the \code{default.style} parameter.
-#' See functions \code{\link{default.style}()} and
+#' See \code{\link{riverplot-styles}()} and
 #' \code{\link{updateRiverplotStyle}()} to learn how to create and
 #' modify the styles.
 #'
@@ -384,7 +385,7 @@ plot.riverplot <- function( x, ...  ) riverplot( x, ... )
 #'       actual positions (in user coordinates) of the nodes drawn on the screen.
 #'       Note that it also may contain additional, invisible nodes that have been
 #'       created by the algorithm to better fit on the screen.
-#'@seealso default.style updateRiverplotStyle minard
+#'@seealso riverplot-styles updateRiverplotStyle minard
 #'@examples 
 #' x <- riverplot.example()
 #' plot(x)
@@ -402,9 +403,12 @@ riverplot <- function( x, lty= 0, srt= NULL,
 
   default_style <- getstyle( NULL, default_style )
   plot.new()
+  dmsgc( "--------------\nDefault style:\n-----------\n" )
   dmsg( default_style )
+  dmsgc( "--------------\n" )
 
   x2 <- x
+  x2$nodes$ID <- as.character( x2$nodes$ID )
 
   # check sanity of the edge information
   dmsg( "checking edges" )
@@ -422,10 +426,15 @@ riverplot <- function( x, lty= 0, srt= NULL,
   # add mid points
   dmsg( "adding mid points" )
   if( add_mid_points ) x2 <- add_mid_points( x2 )
+
   # update styles
   for( n in c( x2$nodes$ID, x2$edges$ID ) ) { 
     x2$styles[[ n ]] <- getstyle( x2$styles[[ n ]], default_style, update.missing= FALSE ) 
   }
+
+  dmsgc( "Updated styles:\n" )
+  dmsg( x2$styles )
+  dmsgc( "--------------\n" )
 
   #for( n in names( x2$nodes ) ) { x2$styles[[ n ]] <- getstyle( x2$styles[[ n ]], default.style ) }
 
