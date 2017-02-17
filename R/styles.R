@@ -8,6 +8,8 @@ default.style <- function( ) {
       srt=       "90",
       lty=       1,
       textcol=   "black",
+      textcex=   1,
+      textpos=   NULL,
       edgecol=   "gradient",
       edgestyle= "sin"
       )
@@ -20,9 +22,9 @@ default.style <- function( ) {
 #' @export 
 updateRiverplotStyle <- function( style, master ) getstyle( style, master )
 
-# function for updating styles. s is filled up with default values if these
-# values are empty. If update.missing is TRUE, update also these fields
-# which are missing from the global default style.
+## function for updating styles. s is filled up with default values if these
+## values are empty. If update.missing is TRUE, update also these fields
+## which are missing from the global default style.
 getstyle   <- function( s, defaults= NULL, update.missing= FALSE ) {
 
   if( is.null( s ) ) s <- list( )
@@ -46,7 +48,7 @@ getstyle   <- function( s, defaults= NULL, update.missing= FALSE ) {
 }
 
 
-# checks whether attr for id in styles is equal to value
+## checks whether attr for id in styles is equal to value
 isStyle <- function( styles, id, attr, value ) {
 
   if( is.null( styles ) ) return( FALSE )
@@ -58,7 +60,7 @@ isStyle <- function( styles, id, attr, value ) {
   FALSE
 }
 
-# copy attribute from id.from to id.to
+## copy attribute from id.from to id.to
 copyattr <- function( styles, id.from, id.to, attr ) {
   
   val <- getattr( styles, id.from, attr )
@@ -76,10 +78,8 @@ setattr <- function( styles, id, attr, value ) {
   return( styles )
 }
 
-# return attribute for id in styles. If NULL, return the default
+## return attribute for id in styles. If NULL, return the default
 getattr <- function( styles, id, attr ) {
-
-  def <- TRUE
 
   if( is.null( styles ) || 
       is.null( styles[[id]] ) ||
@@ -91,9 +91,9 @@ getattr <- function( styles, id, attr ) {
   return( tmp[[attr]] )
 }
 
-# merges styles s1 and s2, overwriting s1 if IDs are repeated
-# if s1 is NULL, it will be created.
-# if s2 is NULL, it will be ignored
+## merges styles s1 and s2, overwriting s1 if IDs are repeated
+## if s1 is NULL, it will be created.
+## if s2 is NULL, it will be ignored
 mergestyles <- function( s1, s2 ) {
 
   if( is.null( s1 ) ) s1 <- list()

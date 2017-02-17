@@ -1,0 +1,5 @@
+0.6 January Weiner <january.weiner@gmail.com>
+ * the Sankey plot can be now added to another plot at specified coordinates
+ * reversed a temporary fix for generating PDF files, because it causes
+   problems when transparent colors are used. This can be switched on again
+   with the fix.pdf=TRUE option (see riverplot help page for details).

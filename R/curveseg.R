@@ -20,6 +20,7 @@
 #' \code{colorRampPalette} can understand.
 #' @param lty Line type for drawing of the segment. Use \code{lty=0} for no line.
 #' @param form "sin" for a sinusoidal segment. "line" for a straight segment.
+#' @param fix.pdf Draw a border around segments with line type lty in a desperate attempt to fix the PDF output.
 #' @return no value is returned
 #' @export
 #' @examples 
@@ -40,7 +41,7 @@
 #' }
 
 
-curveseg <- function( x0, x1, y0, y1, width= 1, nsteps= 50, col= "#ffcc0066", grad= NULL, lty= 1, form= c( "sin", "line" ) ) {
+curveseg <- function( x0, x1, y0, y1, width= 1, nsteps= 50, col= "#ffcc0066", grad= NULL, lty= 1, form= c( "sin", "line" ), fix.pdf=0 ) {
 
   w <- width
 
@@ -65,8 +66,8 @@ curveseg <- function( x0, x1, y0, y1, width= 1, nsteps= 50, col= "#ffcc0066", gr
 
   for( i in 1:(nsteps-1) ) {
     polygon( c( xx[i], xx[i+1], xx[i+1], xx[i] ),
-             c( yy[i], yy[i+1], yy[i+1] + w, yy[i] + w ), col= grad[i], border= grad[i] )
-             # c( yy[i], yy[i+1], yy[i+1] + w, yy[i] + w ), col= grad[i], lty= 0 )
+             #c( yy[i], yy[i+1], yy[i+1] + w, yy[i] + w ), col= grad[i], border= grad[i] )
+             c( yy[i], yy[i+1], yy[i+1] + w, yy[i] + w ), col= grad[i], border=grad[i], lty=fix.pdf )
     lines( c( xx[i], xx[i+1] ), c( yy[i], yy[i+1] ), lty= lty )
     lines( c( xx[i], xx[i+1] ), c( yy[i] + w, yy[i+1] + w ), lty= lty )
   }

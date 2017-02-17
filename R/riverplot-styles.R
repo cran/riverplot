@@ -49,7 +49,10 @@
 #' \item{srt}{(default: "90"). Rotation of the label (see \code{\link{par}})}
 #' \item{lty}{(default: 1). Line type to draw around node and edges}
 #' \item{textcol}{(default: "black"). Color of the node label.}
+#' \item{textpos}{(default: NULL). Label position, passed on to "pos" argument of the text() function.}
+#' \item{textcex}{(default: 1). Label cex, passed on to "cex" argument of the text() function.}
 #' }
+#' @aliases riverplotStyle-class riverplot-styles
 #' @param style style to update
 #' @param master master style to use for updating
 #' @return Both functions return an object of the riverplotStyle class

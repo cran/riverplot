@@ -1,0 +1,4 @@
+ * 0.6 -- (i) you can specify the position of the text label (using the
+     "pos" parameter of text()); (ii) graphics state is now restored
+     correctly; (iii) you can add the plots to existing graphics using the
+     "add=TRUE" parameter.
