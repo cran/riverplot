@@ -2,9 +2,12 @@
 % Please edit documentation in R/riverplot.example.R
 \name{riverplot.example}
 \alias{riverplot.example}
-\title{Generate an example for riverplot}
+\title{Generate examples for riverplot}
 \usage{
-riverplot.example()
+riverplot.example(no = 1)
+}
+\arguments{
+\item{no}{which example to generate}
 }
 \description{
 Generate an example for riverplot
@@ -18,6 +21,9 @@ created.
 \examples{
 x <- riverplot.example()
 plot( x )
+x <- riverplot.example(no=2)
+riverplot(x, lty=1, plot_area=1, disentangle=TRUE, 
+   gravity="c", default_style=list(nodestyle="invisible"))
 }
 \author{
 January Weiner <january.weiner@gmail.com>

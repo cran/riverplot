@@ -28,7 +28,7 @@ Riverplot styles
 Riverplot styles are just lists with key-value pairs that define how
 nodes and edges are drawn. Although there are attributes that are only
 applicable to either nodes or edges, there are no separate style lists for
-these objects.
+these objects. 
 
 The \code{default.style} function simply returns the default style
 defined in the riverplot package (including edge and node attributes).
@@ -67,6 +67,9 @@ Following style fields and values are defined:
 node that form the edge}
         \item{col}{The color specified in the "col" attribute of the edge}
    }}
+\item{horizontal}{(default: \code{FALSE}). If set to \code{TRUE}, the
+edge will be drawn horizontally by repositioning the node on the right hand side. 
+This may mess up the figure, so beware.}
 \item{col}{(default: "grey"). Color of the node or edge (for edges, it
 is used only if the "edgecol" attribute is "col".}
 \item{srt}{(default: "90"). Rotation of the label (see \code{\link{par}})}

@@ -11,7 +11,8 @@ default.style <- function( ) {
       textcex=   1,
       textpos=   NULL,
       edgecol=   "gradient",
-      edgestyle= "sin"
+      edgestyle= "sin",
+      horizontal=FALSE
       )
   
   class( ret ) <- c( class( ret ), "riverplotStyle" )
@@ -22,10 +23,18 @@ default.style <- function( ) {
 #' @export 
 updateRiverplotStyle <- function( style, master ) getstyle( style, master )
 
+update_styles <- function(x, default_style) {
+  for(n in c(x$nodes$ID, x$edges$ID)) {
+    x$styles[[ n ]] <- getstyle(x$styles[[ n ]], default_style, update.missing=FALSE)
+  }
+	x
+}
+
+
 ## function for updating styles. s is filled up with default values if these
 ## values are empty. If update.missing is TRUE, update also these fields
 ## which are missing from the global default style.
-getstyle   <- function( s, defaults= NULL, update.missing= FALSE ) {
+getstyle   <- function(s, defaults= NULL, update.missing= FALSE ) {
 
   if( is.null( s ) ) s <- list( )
   
@@ -62,11 +71,9 @@ isStyle <- function( styles, id, attr, value ) {
 
 ## copy attribute from id.from to id.to
 copyattr <- function( styles, id.from, id.to, attr ) {
-  
   val <- getattr( styles, id.from, attr )
   styles <- setattr( styles, id.to, attr, val )
   return( styles )
-
 }
 
 setattr <- function( styles, id, attr, value ) {
@@ -81,9 +88,12 @@ setattr <- function( styles, id, attr, value ) {
 ## return attribute for id in styles. If NULL, return the default
 getattr <- function( styles, id, attr ) {
 
+  #printf("id=%s, attr=%s", id, attr)
   if( is.null( styles ) || 
+      #(is.numeric(id) && id > length(styles)) ||
       is.null( styles[[id]] ) ||
-      is.null( styles[[id]][[attr]] ) ) 
+      is.null( styles[[id]][[attr]])
+      ) 
     tmp <- default.style()
   else
     tmp <- styles[[id]]

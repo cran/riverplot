@@ -13,7 +13,7 @@ arrows is proportional to the quantity they illustrate.
 Riverplot allows the creation, in R, of a basic type of Sankey diagrams.
 
 First, you need to create a specific riverplot object that can be
-directly plotted. (Use \code{\link{riverplot.example}} to generate an example object).
+directly plotted. (Use \code{\link{riverplot.example}} to generate an example object). 
 
 The simplest way is to create a graph-like representation of you diagram as
 a list of nodes; each item in the list is a list of partner nodes.

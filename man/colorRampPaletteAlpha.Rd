@@ -3,7 +3,6 @@
 \name{colorRampPaletteAlpha}
 \alias{colorRampPaletteAlpha}
 \alias{colorRampAlpha}
-\alias{colorRampAlpha}
 \title{Color interpolation}
 \usage{
 colorRampPaletteAlpha(colors, ...)

@@ -7,10 +7,27 @@
 \usage{
 \method{plot}{riverplot}(x, ...)
 
-riverplot(x, direction = "lr", lty = 0, default_style = NULL,
-  gravity = "top", node_margin = 0.1, nodewidth = 1.5, plot_area = 0.5,
-  nsteps = 50, add_mid_points = NULL, xscale = 1, yscale = "auto",
-  mar = c(0, 0, 0, 0), add = FALSE, usr = NULL, fix.pdf = FALSE, ...)
+riverplot(
+  x,
+  direction = "lr",
+  lty = 0,
+  default_style = NULL,
+  gravity = "top",
+  node_margin = 0.1,
+  nodewidth = 1.5,
+  plot_area = c(1, 0.5),
+  nsteps = 50,
+  disentangle = TRUE,
+  add_mid_points = TRUE,
+  yscale = "auto",
+  add = FALSE,
+  usr = NULL,
+  adjust.usr = FALSE,
+  rescale = TRUE,
+  fix.pdf = FALSE,
+  bty = "n",
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class riverplot}
@@ -31,41 +48,58 @@ nodes}
 
 \item{nodewidth}{width of the node (relative to font size)}
 
-\item{plot_area}{fraction of vertical space to be used as main plot area}
+\item{plot_area}{fraction of vertical and horizontal space to be used as main plot area
+If it is a numeric vector of two numbers, the first one is
+horizontal space, the second vertical.}
 
 \item{nsteps}{number of interpolating steps in drawing the segments}
 
+\item{disentangle}{try to disentangle connections between the nodes. If
+FALSE, the vertical ordering of the connections is the same as in the
+x$edges data frame.}
+
 \item{add_mid_points}{attempt to get a smoother plot by adding additional
 nodes. Set this parameter to \code{FALSE} if you are setting node
-vertical position manually. If add_mid_points is equal to NULL (the
+vertical position manually. If add_mid_points is equal to TRUE (the
 default), then the
 mid points are added only if \var{node_ypos} is empty.}
-
-\item{xscale}{scale the positions of the nodes by that factor. This can
-be used to "squeeze" the diagram to the left as necessary.}
 
 \item{yscale}{scale the edge width values by multiplying with this
 factor. If \var{yscale} is equal to "auto", scaling is done
 automatically such that the vertical size of the largest node is
-approximately equal to 15% of the range of ypos (if present). 
+approximately 15% of the range of ypos (if present). 
 If no \var{node_ypos} is specified in the riverplot object, no scaling is
-done.
-If \var{yscale} is equal to 1, no scaling is done.}
-
-\item{mar}{margins to set (as accepted by par(mar=..)). Set to NULL if
-you want the margins untouched.}
+done. If \var{yscale} is equal to 1, no scaling is done.
+This parameter only influences the plot if the y positions of the
+nodes are provided in \code{x$nodes}.}
 
 \item{add}{If TRUE, do not call plot.new(), but add to the existing plot.}
 
-\item{usr}{coordinates at which to draw the plot in form (x0, x1, y0, y1).}
+\item{usr}{coordinates at which to draw the plot in form (x0, x1, y0, y1). 
+If NULL, par("usr") will be used instead.}
+
+\item{adjust.usr}{If TRUE, the par("usr")
+will be modified to suit the x and y coordinates of the riverplot
+nodes (whether the coordinates were given in the nodes, or
+calculated by the function). In combination with providing x and y
+coordinates, this allows a true representation of a riverplot object.
+Necessary if you plan to plot additional, external data. If TRUE,
+then \code{rescale} is set to FALSE.
+See \code{\link{minard}} data set and example for details.}
+
+\item{rescale}{if TRUE, then the plot will be fit into the given
+user coordinates range (set by the usr parameter, for example, or the whole plot
+region). If FALSE, the x and y positions of the nodes will be
+treated as user coordinates and used to directly plot on the device.}
 
 \item{fix.pdf}{Try to fix PDF output if it looks broken (with thin white lines). Don't use this option if you are using transparent colors.}
+
+\item{bty}{box type to draw around the plot; see \code{bty} in documentation for \code{\link{par}} for details.}
 }
 \value{
-\code{riverplot} return invisibly a matrix containing the
-      actual positions (in user coordinates) of the nodes drawn on the screen.
-      Note that it also may contain additional, invisible nodes that have been
-      created by the algorithm to better fit on the screen.
+\code{riverplot} returns a riverplot object, a graph which you
+can plot again with riverplot(), but which additionally contains
+information on node position and size in the \code{$nodes} member.
 }
 \description{
 Create a Sankey plot
@@ -78,7 +112,7 @@ the \code{\link{makeRiver}} function for exact specifications and
 the \code{\link{riverplot.example}} to see how it can be created.
 Whether or not the list used to plot is exactly of class
 \code{riverplot-class} does not matter as long as it has the correct
-contents.
+contents. 
 
 Style information which is missing from the riverplot object \code{x} (for example, if the
 node style is not specified for each node in the object) is taken from the \code{default.style} parameter.
@@ -113,6 +147,13 @@ for that problem yet.
 x <- riverplot.example()
 plot(x)
 plot(x, srt=90, lty=1)
+
+# add graphics at nodes
+foo <- plot(x, srt=90, lty=1)
+points(foo$nodes$x, foo$nodes$y, pch=19, cex=2)
+
+# redraw the same graph using positions from foo object
+plot(foo, yscale=1)
 }
 \seealso{
 default.style updateRiverplotStyle minard

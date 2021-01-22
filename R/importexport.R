@@ -66,7 +66,8 @@
 #'   \item{N2}{The ID of the second node}
 #'   \item{Value}{The width of the edge between N1 and N2}
 #' }
-#' If an ID column is absent, it will be generated from N1 and N2.
+#' If an ID column is absent, it will be generated from N1 and N2 by
+#' joining the N1 and N2 ID's with the "->" string.
 #' Additionaly, the data frame may contain style information.
 #' Any \var{NA} values are ignored (not entered into the riverplot object).
 #' }
@@ -88,8 +89,8 @@
 #' may include columns with names corresponding to style attributes. For
 #' example, a column called "col" will contain the color attribute for any
 #' nodes / edges. \var{NA} values in these columns are ignored.
-#' \item \var{node_styles} and \var{edge_styles} are lists of styles, with
-#' names corresponding to node IDs and edge IDs, which will replace any
+#' \item \var{styles} is a lists of styles, with
+#' names corresponding to node IDs or edge IDs, which will replace any
 #' previously specified styles.
 #' }
 #'
@@ -102,8 +103,9 @@
 #' @param node_ypos A named vector of numeric values specifying 
 #'        the vertical positions on the plot.
 #' @param node_labels A named character vector of labels for the nodes
-#' @param node_styles A named list specifying the styles for the nodes
-#' @param edge_styles A named list specifying the styles for the nodes
+#' @param node_styles Deprecated
+#' @param edge_styles Deprecated
+#' @param styles A named list specifying the styles for the nodes and edges
 #' @param default_style list containing style information which is applied
 #'        to every node and every edge
 #' @return A riverplot object which can directly be plotted.
@@ -134,7 +136,8 @@
 
 makeRiver <- function( nodes, edges, 
                        node_labels= NULL, 
-                       node_xpos= NULL, node_ypos=NULL,
+                       node_xpos= NULL, node_ypos=NULL, 
+                       styles=NULL,
                        node_styles= NULL, edge_styles= NULL, 
                        default_style= NULL ) {
   ret <- list()
@@ -142,11 +145,12 @@ makeRiver <- function( nodes, edges,
   if( is.null( nodes ) ) stop( "nodes cannot be NULL" )
   if( class( nodes ) == "character" ) {
     nodes <- unique( nodes )
-    nodes <- data.frame( ID=nodes, x= 1:length( nodes ) )
+    nodes <- data.frame( ID=as.character(nodes), x= 1:length( nodes ) )
   } else if( class( nodes ) %in% c( "matrix", "data.frame" ) ) {
-    nodes <- data.frame( nodes )
+    nodes <- data.frame(nodes)
     if( is.null( nodes[, "ID" ] ) ) 
       stop( "nodes must have an ID column" )
+    nodes$ID <- as.character(nodes$ID)
   } else {
     stop( "Incorrect type for nodes object" )
   }
@@ -183,7 +187,7 @@ makeRiver <- function( nodes, edges,
     stop( "Incorrect edges parameter" )
 
   # check the edges
-  edges       <- checkedges( edges, nodes$ID )
+  edges       <- checkedges(edges, nodes$ID)
  
   # check whether styles is sane
   if( !is.null( node_styles ) ) {
@@ -199,9 +203,20 @@ makeRiver <- function( nodes, edges,
       stop( "edge_styles must be a named list" )
   } 
 
+  # check whether styles is sane
+  if( !is.null( styles ) ) {
+
+    if(class(styles) != "list"  ||
+        is.null(names(styles))) {
+      warning( "style must be a named list" )
+      styles <- NULL
+    }
+      #stop(paste0(styles))
+  } 
   # add the style information from nodes and edges
   node_styles <- mergestyles( readStyleCols( nodes ), node_styles )
   edge_styles <- mergestyles( readStyleCols( edges ), edge_styles )
+  styles <- mergestyles(edge_styles, mergestyles(node_styles, styles))
  
   if( ! is.null( default_style ) ) {
     if( ! "list" %in% class( default_style ) ) stop( "default_style must be a list" )
@@ -213,12 +228,11 @@ makeRiver <- function( nodes, edges,
 
   ret$edges       <- edges
   ret$nodes       <- nodes
-  ret$styles <- mergestyles( ret$styles, 
-      mergestyles( edge_styles, node_styles ) )
+  ret$styles <- mergestyles(ret$styles, styles)
 
   #ret$node_ypos <- node_ypos
   class( ret ) <- c( class( ret), "riverplot" )
-  return( ret )
+  return(ret)
 }
 
 # convert node_edge in list format to data frame
@@ -245,22 +259,55 @@ edgelist2df <- function( edges ) {
 }
 
 
-checkedges <- function( edges, nnames ) {
-  if( ncol( edges ) < 3 
-       || ! all( c( "N1", "N2", "Value" ) %in% colnames( edges ) ) )
-    stop( "edges must have the columns N1, N2 and Value" )
+## check the nodes data frame
+checknodes <- function(nodes) {
 
-  if( ! "ID" %in% colnames( edges ) ) {
-    edges$ID <- paste0( edges$N1, "->", edges$N2 )
+  if(is.null(nodes)) 
+    stop("checknodes: node object missing")
+
+  if(is.null(nodes$ID))
+    stop("checknodes: node ID column missing")
+
+  # check for duplicate IDs
+  if(any(duplicated(nodes$ID))) {
+    ndups <- sum(duplicated(nodes$ID))
+    warning(sprintf("checknodes: duplicate node IDs found, removing %d nodes", ndups))
+    nodes <- nodes[!duplicated(nodes$ID), ]
   }
 
-  if( any( edges$ID %in% nnames ) )
+  # rownames and IDs must be identical
+  rownames(nodes) <- nodes$ID
+  return(nodes)
+}
+
+
+## check whether the x$edges object is sane
+checkedges <- function(edges, nnames) {
+  # mandatory columns present?
+  if(ncol(edges) < 3 
+       || ! all( c("N1", "N2", "Value") %in% colnames(edges)))
+    stop("edges must have the columns N1, N2 and Value")
+
+  # autogenerate IDs if necessary
+  if(!"ID" %in% colnames(edges)) {
+    edges$ID <- paste0(edges$N1, "->", edges$N2)
+  } else {
+    edges$ID <- as.character(edges$ID)
+  }
+
+  # make sure that node and edge names don't clash. Not the best
+  # solution...
+  if(any(edges$ID %in% nnames))
     stop( "edges must not have the same IDs as nodes" )
 
-  if( ! all( c( as.character( edges$N1 ), as.character( edges$N2 ) ) %in% nnames ) ) {
-    sel <- ( ! edges$N1 %in% nnames ) | ( ! edges$N2 %in% nnames )
-    n <- sum( sel )
-    warning( sprintf( "unknown nodes present in the edges parameter, removing %d edges", n ) )
+  # all edges between nodes which are known?
+  all.edges <- c(as.character(edges$N1), as.character(edges$N2))
+  if(! all(all.edges %in% nnames)) {
+    sel <- (! as.character(edges$N1) %in% nnames) | (! as.character(edges$N2) %in% nnames )
+    n <- sum(sel)
+    tmp <- paste(unique(all.edges[!all.edges %in% nnames]), collapse="\n")
+
+    warning( sprintf( "unknown nodes present in the edges parameter, removing %d edges\nUnknown nodes:\n%s", n, tmp ) )
     edges <- edges[ ! sel, ]
   }
 
@@ -273,24 +320,44 @@ checkedges <- function( edges, nnames ) {
     edges <- edges[ ! sel, ]
   }
 
-  if( any( duplicated( edges$ID ) ) ) {
-    n <- sum( duplicated( edges$ID ) )
-    warning( sprintf( "duplicated edge information, removing %d edges ", n) )
+  # edge ID's must not be duplicated
+  if(any(duplicated(edges$ID))) {
+    n <- sum(duplicated(edges$ID))
+    warning(sprintf("duplicated edge information, removing %d edges ", n))
     edges <- edges[ ! duplicated( edges$ID ), ]
   }
 
-  if( any( is.na( edges$Value ) ) ) {
-    n <- sum( is.na( edges$Value ) )
-    warning( sprintf( "NA's in edges, removing %d edges", n ) )
+  # edges must have a numeric value
+  if(any(is.na(edges$Value))) {
+    edges$Value <- as.numeric(edges$Value)
+    n <- sum(is.na(edges$Value))
+    warning(sprintf( "NA's (or non-numeric values) in edges, removing %d edges", n))
     edges <- edges[ ! is.na( edges$Value ), ]
   }
 
-  if( ! is.numeric( edges$Value ) )
-    stop( "Non-numeric edge sizes" )
+  if(nrow(edges) == 0) stop( "No edges left to draw" )
+  rownames(edges) <- edges$ID
+  return(edges)
+}
 
-  if( nrow( edges ) == 0 ) stop( "No edges to draw" )
-  rownames( edges ) <- edges$ID
-  return( edges )
+## check nodes and edges of a riverplot object
+checkriverplot <- function(x) {
+
+  if(!is(x, "riverplot")) {
+    if(!is.list(x)) stop("checkriverplot: x must be a list or a riverplot object")
+    warning("checkriverplot: converting x to riverplot object")
+    class(x) <- "riverplot"
+  }
+
+  if(is.null(x$nodes$ID)) x$nodes$ID <- paste0("N.", 1:nrow(x$nodes))
+  if(is.null(x$edges$ID)) x$edges$ID <- paste0("E.", 1:nrow(x$edges))
+
+  x$nodes$ID <- as.character(x$nodes$ID)
+
+  x$nodes <- checknodes(x$nodes)
+  x$edges <- checkedges(x$edges, names(x))
+
+  x
 }
 
 df2conn <- function( edges ) {

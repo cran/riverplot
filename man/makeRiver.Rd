@@ -4,9 +4,17 @@
 \alias{makeRiver}
 \title{Create a new riverplot object}
 \usage{
-makeRiver(nodes, edges, node_labels = NULL, node_xpos = NULL,
-  node_ypos = NULL, node_styles = NULL, edge_styles = NULL,
-  default_style = NULL)
+makeRiver(
+  nodes,
+  edges,
+  node_labels = NULL,
+  node_xpos = NULL,
+  node_ypos = NULL,
+  styles = NULL,
+  node_styles = NULL,
+  edge_styles = NULL,
+  default_style = NULL
+)
 }
 \arguments{
 \item{nodes}{Data frame with node ID's, positions and optionally other
@@ -23,9 +31,11 @@ the horizontal positions on the plot.}
 \item{node_ypos}{A named vector of numeric values specifying 
 the vertical positions on the plot.}
 
-\item{node_styles}{A named list specifying the styles for the nodes}
+\item{styles}{A named list specifying the styles for the nodes and edges}
 
-\item{edge_styles}{A named list specifying the styles for the nodes}
+\item{node_styles}{Deprecated}
+
+\item{edge_styles}{Deprecated}
 
 \item{default_style}{list containing style information which is applied
 to every node and every edge}
@@ -104,7 +114,8 @@ columns:
   \item{N2}{The ID of the second node}
   \item{Value}{The width of the edge between N1 and N2}
 }
-If an ID column is absent, it will be generated from N1 and N2.
+If an ID column is absent, it will be generated from N1 and N2 by
+joining the N1 and N2 ID's with the "->" string.
 Additionaly, the data frame may contain style information.
 Any \var{NA} values are ignored (not entered into the riverplot object).
 }
@@ -127,8 +138,8 @@ following order:
 may include columns with names corresponding to style attributes. For
 example, a column called "col" will contain the color attribute for any
 nodes / edges. \var{NA} values in these columns are ignored.
-\item \var{node_styles} and \var{edge_styles} are lists of styles, with
-names corresponding to node IDs and edge IDs, which will replace any
+\item \var{styles} is a lists of styles, with
+names corresponding to node IDs or edge IDs, which will replace any
 previously specified styles.
 }
 }

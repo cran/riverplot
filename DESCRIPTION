@@ -1,18 +1,23 @@
 Package: riverplot
 Type: Package
 Title: Sankey or Ribbon Plots
-Version: 0.6
-Date: 2016-10-05
+Version: 0.10
+Date: 2021-01-22
 Author: January Weiner <january.weiner@gmail.com>
 Maintainer: January Weiner <january.weiner@gmail.com>
 Description: Sankey plots are a type of diagram that is convenient to
     illustrate how flow of information, resources etc. separates and joins,
     much like observing how rivers split and merge. For example, they can be
     used to compare different clusterings.
-URL: http://logfc.wordpress.com
+URL: https://logfc.wordpress.com
 License: GPL (>= 2.0)
-RoxygenNote: 6.0.1
+Encoding: UTF-8
+Imports: methods,RColorBrewer
+LazyData: true
+Suggests: knitr,maptools,qpdf,rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 7.1.1
 NeedsCompilation: no
-Packaged: 2017-02-17 10:48:09.053 UTC; january
+Packaged: 2021-01-22 13:24:24 UTC; january
 Repository: CRAN
-Date/Publication: 2017-02-17 18:33:14
+Date/Publication: 2021-01-22 14:10:02 UTC

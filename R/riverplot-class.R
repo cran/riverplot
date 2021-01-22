@@ -1,8 +1,8 @@
 
 print.riverplot <- function( x ) {
-  cat( sprintf( "RiverPlot object with %d nodes:\n", length( names( x$nodes ) ) ) )
-  print( names( x$nodes ) )
-  return( invisible( x ) )
+  cat(sprintf( "RiverPlot object with %d nodes:\n", length(names(x))))
+  print(names(x))
+  return(invisible(x))
 }
 
 as.matrix.riverplot <- function( x ) conn2mtx( x$conn )

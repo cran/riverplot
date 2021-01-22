@@ -4,8 +4,19 @@
 \alias{curveseg}
 \title{Draw a curved segment}
 \usage{
-curveseg(x0, x1, y0, y1, width = 1, nsteps = 50, col = "#ffcc0066",
-  grad = NULL, lty = 1, form = c("sin", "line"), fix.pdf = 0)
+curveseg(
+  x0,
+  x1,
+  y0,
+  y1,
+  width = 1,
+  nsteps = 50,
+  col = "#ffcc0066",
+  grad = NULL,
+  lty = 1,
+  form = c("sin", "line"),
+  fix.pdf = 0
+)
 }
 \arguments{
 \item{x0}{X coordinate of the starting point}
